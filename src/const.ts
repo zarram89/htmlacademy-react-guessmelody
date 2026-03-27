@@ -2,7 +2,6 @@ export const Setting = {
   ErrorCount: 3
 };
 
-
 export enum AppRoute {
   Login = '/login',
   Lose = '/lose',
@@ -10,4 +9,10 @@ export enum AppRoute {
   Root = '/',
   DevArtist = '/dev-artist',
   DevGenre = '/dev-genre',
+}
+
+export enum AuthorizationStatus {
+  Auth = 'AUTH',
+  NoAuth = 'NO_AUTH',
+  Unknown = 'UNKNOWN',
 }
