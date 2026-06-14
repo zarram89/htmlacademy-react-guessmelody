@@ -11,6 +11,7 @@ export enum AppRoute {
   Root = '/',
   DevArtist = '/dev-artist',
   DevGenre = '/dev-genre',
+  Game = '/game'
 }
 
 export enum AuthorizationStatus {
