@@ -1,4 +1,4 @@
-import {ChangeEvent} from 'react';
+import {useState, ChangeEvent} from 'react';
 import {Helmet} from 'react-helmet-async';
 import Logo from '../../components/logo/logo';
 import AudioPlayer from '../../components/audio-player/audio-player';
@@ -13,6 +13,8 @@ function ArtistQuestionScreen(props: ArtistQuestionScreenProps): JSX.Element {
   const {question, onAnswer} = props;
   const {answers, song} = question;
 
+  const [isPlaying, setIsPlaying] = useState(true);
+
   return (
     <section className="game game--artist">
       <Helmet>
@@ -22,7 +24,9 @@ function ArtistQuestionScreen(props: ArtistQuestionScreenProps): JSX.Element {
         <Logo />
 
         <svg xmlns="http://www.w3.org/2000/svg" className="timer" viewBox="0 0 780 780">
-          <circle className="timer__line" cx="390" cy="390" r="370" style={{filter: 'url(#blur)', transform: 'rotate(-90deg) scaleY(-1)', transformOrigin: 'center'}}/>
+          <circle className="timer__line" cx="390" cy="390" r="370"
+            style={{filter: 'url(#blur)', transform: 'rotate(-90deg) scaleY(-1)', transformOrigin: 'center'}}
+          />
         </svg>
 
         <div className="game__mistakes">
@@ -36,13 +40,11 @@ function ArtistQuestionScreen(props: ArtistQuestionScreenProps): JSX.Element {
         <h2 className="game__title">Кто исполняет эту песню?</h2>
         <div className="game__track">
           <div className="track">
-            <button className="track__button track__button--play" type="button" />
-            <div className="track__status">
-              <AudioPlayer
-                autoPlay
-                src={song.src}
-              />
-            </div>
+            <AudioPlayer
+              isPlaying={isPlaying}
+              src={song.src}
+              onPlayButtonClick={() => setIsPlaying(!isPlaying)}
+            />
           </div>
         </div>
 
