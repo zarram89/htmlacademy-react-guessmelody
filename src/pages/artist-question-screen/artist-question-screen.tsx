@@ -1,24 +1,22 @@
-import {useState, FormEvent, ChangeEvent} from 'react';
+import {ChangeEvent, PropsWithChildren} from 'react';
 import {Helmet} from 'react-helmet-async';
 import Logo from '../../components/logo/logo';
-import {QuestionGenre, UserGenreQuestionAnswer} from '../../types/question';
+import {QuestionArtist, UserArtistQuestionAnswer} from '../../types/question';
 
-type GenreQuestionScreenProps = {
-  question: QuestionGenre;
-  onAnswer: (question: QuestionGenre, answers: UserGenreQuestionAnswer) => void;
+type ArtistQuestionScreenProps = PropsWithChildren<{
+  question: QuestionArtist;
+  onAnswer: (question: QuestionArtist, answer: UserArtistQuestionAnswer) => void;
   renderPlayer: (src: string, playerIndex: number) => JSX.Element;
-};
+}>;
 
-function GenreQuestionScreen(props: GenreQuestionScreenProps): JSX.Element {
-  const {question, onAnswer, renderPlayer} = props;
-  const {answers, genre} = question;
-
-  const [userAnswers, setUserAnswers] = useState([false, false, false, false]);
+function ArtistQuestionScreen(props: ArtistQuestionScreenProps): JSX.Element {
+  const {question, onAnswer, renderPlayer, children} = props;
+  const {answers, song} = question;
 
   return (
-    <section className="game game--genre">
+    <section className="game game--artist">
       <Helmet>
-        <title>Угадай мелодию. Выберите треки</title>
+        <title>Угадай мелодию. Кто исполняет эту песню?</title>
       </Helmet>
       <header className="game__header">
         <Logo />
@@ -29,47 +27,41 @@ function GenreQuestionScreen(props: GenreQuestionScreenProps): JSX.Element {
           />
         </svg>
 
-        <div className="game__mistakes">
-          <div className="wrong"/>
-          <div className="wrong"/>
-          <div className="wrong"/>
-        </div>
+        {children}
       </header>
 
       <section className="game__screen">
-        <h2 className="game__title">Выберите {genre} треки</h2>
-        <form
-          className="game__tracks"
-          onSubmit={(evt: FormEvent<HTMLFormElement>) => {
-            evt.preventDefault();
-            onAnswer(question, userAnswers);
-          }}
-        >
-          {answers.map((answer, id) => {
-            const keyValue = `${id}-${answer.src}`;
-            return (
-              <div key={keyValue} className="track">
-                {renderPlayer(answer.src, id)}
-                <div className="game__answer">
-                  <input className="game__input visually-hidden" type="checkbox" name="answer" value={`answer-${id}`}
-                    id={`answer-${id}`}
-                    checked={userAnswers[id]}
-                    onChange={({target}: ChangeEvent<HTMLInputElement>) => {
-                      const value = target.checked;
-                      setUserAnswers([...userAnswers.slice(0, id), value, ...userAnswers.slice(id + 1)]);
-                    }}
-                  />
-                  <label className="game__check" htmlFor={`answer-${id}`}>Отметить</label>
-                </div>
-              </div>
-            );
-          })}
+        <h2 className="game__title">Кто исполняет эту песню?</h2>
+        <div className="game__track">
+          <div className="track">
+            {renderPlayer(song.src, 0)}
+          </div>
+        </div>
 
-          <button className="game__submit button" type="submit">Ответить</button>
+        <form className="game__artist">
+          {answers.map((answer, id) => (
+            <div key={answer.artist} className="artist">
+              <input
+                className="artist__input visually-hidden"
+                type="radio"
+                name="answer"
+                value={`answer-${id}`}
+                id={`answer-${id}`}
+                onChange={(evt: ChangeEvent<HTMLInputElement>) => {
+                  evt.preventDefault();
+                  onAnswer(question, answer.artist);
+                }}
+              />
+              <label className="artist__name" htmlFor={`answer-${id}`}>
+                <img className="artist__picture" src={answer.picture} alt={answer.artist} />
+                {answer.artist}
+              </label>
+            </div>
+          ))}
         </form>
       </section>
     </section>
   );
 }
 
-export default GenreQuestionScreen;
+export default ArtistQuestionScreen;
