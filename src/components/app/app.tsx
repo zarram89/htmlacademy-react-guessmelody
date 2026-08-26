@@ -1,5 +1,6 @@
-import {Route, BrowserRouter, Routes} from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 import {HelmetProvider} from 'react-helmet-async';
+import {useAppSelector} from '../../hooks';
 import {AppRoute, AuthorizationStatus, MAX_MISTAKE_COUNT} from '../../const';
 import WelcomeScreen from '../../pages/welcome-screen/welcome-screen';
 import AuthScreen from '../../pages/auth-screen/auth-screen';
@@ -8,11 +9,23 @@ import WinScreen from '../../pages/win-screen/win-screen';
 import NotFoundScreen from '../../pages/not-found-screen/not-found-screen';
 import PrivateRoute from '../private-route/private-route';
 import GameScreen from '../../pages/game-screen/game-screen';
+import LoadingScreen from '../../pages/loading-screen/loading-screen';
+import HistoryRouter from '../history-route/history-route';
+import browserHistory from '../../browser-history';
 
 function App(): JSX.Element {
+  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const isQuestionsDataLoading = useAppSelector((state) => state.isQuestionsDataLoading);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown || isQuestionsDataLoading) {
+    return (
+      <LoadingScreen />
+    );
+  }
+
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <HistoryRouter history={browserHistory}>
         <Routes>
           <Route
             path={AppRoute.Root}
@@ -26,7 +39,7 @@ function App(): JSX.Element {
             path={AppRoute.Result}
             element={
               <PrivateRoute
-                authorizationStatus={AuthorizationStatus.NoAuth}
+                authorizationStatus={authorizationStatus}
               >
                 <WinScreen />
               </PrivateRoute>
@@ -47,7 +60,7 @@ function App(): JSX.Element {
             element={<NotFoundScreen />}
           />
         </Routes>
-      </BrowserRouter>
+      </HistoryRouter>
     </HelmetProvider>
   );
 }
