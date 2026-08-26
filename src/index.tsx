@@ -4,8 +4,9 @@ import {Provider} from 'react-redux';
 import App from './components/app/app';
 import ErrorMessage from './components/error-message/error-message';
 import {store} from './store';
-import {checkAuthAction} from './store/api-actions';
+import {fetchQuestionAction, checkAuthAction} from './store/api-actions';
 
+store.dispatch(fetchQuestionAction());
 store.dispatch(checkAuthAction());
 
 const root = ReactDOM.createRoot(
@@ -14,9 +15,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <Provider store = {store}>
       <ErrorMessage />
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
